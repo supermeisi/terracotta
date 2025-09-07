@@ -25,3 +25,7 @@ class Cylinder():
             return t2
         
         return -1
+    
+    def get_normal(self, ray):
+        return [ray.x / math.sqrt(ray.x**2 + ray.y**2), ray.y / math.sqrt(ray.x**2 + ray.y**2), 0]
+        
