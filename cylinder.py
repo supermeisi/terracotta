@@ -1,8 +1,10 @@
 import math
+import numpy as np
 
 class Cylinder():
     def __init__(self):
         self.r = 5 # Radius in mm
+        self.height_z = 100 # Height in mm
     
     def intersection(self, ray):
         A = ray.dx*ray.dx + ray.dy*ray.dy
@@ -28,4 +30,15 @@ class Cylinder():
     
     def get_normal(self, ray):
         return [ray.x / math.sqrt(ray.x**2 + ray.y**2), ray.y / math.sqrt(ray.x**2 + ray.y**2), 0]
+        
+    def draw(self):
+        z = np.linspace(0, self.height_z, 50)
+        
+        theta = np.linspace(0, 2*np.pi, 50)
+        theta_grid, z_grid = np.meshgrid(theta, z)
+        
+        x_grid = self.r * np.cos(theta_grid)
+        y_grid = self.r * np.sin(theta_grid)
+        
+        return x_grid, y_grid, z_grid
         

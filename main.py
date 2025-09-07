@@ -1,10 +1,15 @@
 import math
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 import ray
 import cylinder
 
 def main(theta_source, phi_source):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
     r = ray.Ray()
     
     # Start condition of ray
@@ -46,6 +51,11 @@ def main(theta_source, phi_source):
     r.dz = r.dz - 2 * prod * n[2]
     
     r.print()
+    
+    xc, yc, zc = c.draw()
+    ax.plot_surface(xc, yc, zc, alpha=0.5)
+    
+    plt.show()
 
 if __name__ == "__main__":
     theta_source = 90.
