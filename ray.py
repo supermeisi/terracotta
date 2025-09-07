@@ -9,3 +9,7 @@ class Ray():
         self.dx = 0.
         self.dy = 0.
         self.dz = 0.
+        
+    def print(self):
+        print(self.x, self.y, self.z)
+        print(self.dx, self.dy, self.dz);

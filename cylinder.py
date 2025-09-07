@@ -10,6 +10,7 @@ class Cylinder():
         C = ray.x*ray.x + ray.y*ray.y - self.r*self.r
 
         discriminant = B*B - 4*A*C
+        
         if (discriminant < 0):
             return -1 # No intersection
 
