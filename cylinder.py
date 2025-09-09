@@ -30,9 +30,9 @@ class Cylinder():
     
     def get_normal(self, ray):
         return [ray.x / math.sqrt(ray.x**2 + ray.y**2), ray.y / math.sqrt(ray.x**2 + ray.y**2), 0]
-        
+    
     def draw(self):
-        z = np.linspace(0, self.height_z, 50)
+        z = np.linspace(-self.height_z, self.height_z, 50)
         
         theta = np.linspace(0, 2*np.pi, 50)
         theta_grid, z_grid = np.meshgrid(theta, z)

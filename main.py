@@ -18,13 +18,54 @@ def main(theta_source, phi_source):
 
     print(theta_source, phi_source)
 
+    rot_z = np.array([
+        [math.cos(phi_source), -math.sin(phi_source), 0],
+        [math.sin(phi_source),  math.cos(phi_source), 0],
+        [0,                     0,                    1]
+        ])
+
+    rot_x = np.array([
+        [1, 0,                       0                     ],
+        [0, math.cos(theta_source), -math.sin(theta_source)],
+        [0, math.sin(theta_source),  math.cos(theta_source)]
+        ])
+
     s = source.Source()
 
     s.z = 50.
-
     s.w = 10.
 
-    s.generate(10)
+    v = np.array([s.x, s.y, s.z])
+    
+    print('Rotation Matrix z:')
+    print(rot_z)
+    print('Rotation Matrix x:')
+    print(rot_x)
+
+    v = rot_z.dot(rot_x.dot(v))
+
+    print('Vector:', v)
+
+    s.x = v[0]
+    s.y = v[1]
+    s.z = v[2]
+
+    v = np.array([s.nx, s.ny, s.nz])
+    
+    print('Rotation Matrix z:')
+    print(rot_z)
+    print('Rotation Matrix x:')
+    print(rot_x)
+
+    v = rot_z.dot(rot_x.dot(v))
+
+    print('Vector:', v)
+
+    s.nx = v[0]
+    s.ny = v[1]
+    s.nz = v[2]
+
+    s.generate(100)
 
     c = cylinder.Cylinder() # Add cylinder to scene
 
@@ -35,44 +76,9 @@ def main(theta_source, phi_source):
     for i in range(len(s.rays)):
         r = s.rays[i]
 
-        v = np.array([r.x, r.y, r.z])
-
-        rot_z = np.array([
-            [math.cos(phi_source), -math.sin(phi_source), 0],
-            [math.sin(phi_source),  math.cos(phi_source), 0],
-            [0,                      0,                   1]
-            ])
-        
-        rot_x = np.array([
-            [1, 0,                       0                     ],
-            [0, math.cos(theta_source), -math.sin(theta_source)],
-            [0, math.sin(theta_source),  math.cos(theta_source)]
-            ])
-        
-        print('Rotation Matrix z:')
-        print(rot_z)
-        print('Rotation Matrix x:')
-        print(rot_x)
-
-        v = rot_z.dot(rot_x.dot(v))
-
-        print('Vector:', v)
-
-        r.x = v[0]
-        r.y = v[1]
-        r.z = v[2]
-
         old_x = r.x
         old_y = r.y
         old_z = r.z
-        
-        norm = math.sqrt(v[0]**2 + v[1]**2 + v[2]**2)
-        
-        r.dx = -v[0] / norm
-        r.dy = -v[1] / norm
-        r.dz = -v[2] / norm
-        
-        r.print()
         
         d = c.intersection(r)
         
@@ -92,15 +98,19 @@ def main(theta_source, phi_source):
         r.dy = r.dy - 2 * prod * n[1]
         r.dz = r.dz - 2 * prod * n[2]
 
+        ax.set_xlim(-25., 25.)
+        ax.set_ylim(-25., 25.)
+        ax.set_zlim(-25., 25.)
+
         ax.plot([old_x, r.x], [old_y, r.y], [old_z, r.z])
         
         r.print()
     
-    #plt.show()
+    plt.show()
     plt.savefig('view.png', dpi=300)
 
 if __name__ == "__main__":
     theta_source = 90.
-    phi_source = 45.
+    phi_source = 0.
 
     main(theta_source, phi_source)
