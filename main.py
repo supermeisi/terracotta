@@ -106,7 +106,7 @@ def main(theta_source, phi_source):
         
         r.print()
     
-    plt.show()
+    #plt.show()
     plt.savefig('view.png', dpi=300)
 
 if __name__ == "__main__":
