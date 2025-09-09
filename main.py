@@ -4,13 +4,12 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 import ray
+import source
 import cylinder
 
 def main(theta_source, phi_source):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-
-    r = ray.Ray()
     
     # Start condition of ray
     theta_source = math.radians(theta_source)
@@ -18,65 +17,77 @@ def main(theta_source, phi_source):
 
     print(theta_source, phi_source)
 
-    v = np.array([0., 0., 50.])
+    s = source.Source()
 
-    rot_z = np.array([
-        [math.cos(phi_source), -math.sin(phi_source), 0],
-        [math.sin(phi_source),  math.cos(phi_source), 0],
-        [0,                      0,                       1]
-        ])
-    
-    rot_x = np.array([
-        [1, 0,                       0                     ],
-        [0, math.cos(theta_source), -math.sin(theta_source)],
-        [0, math.sin(theta_source),  math.cos(theta_source)]
-        ])
-    
-    print('Rotation Matrix z:')
-    print(rot_z)
-    print('Rotation Matrix x:')
-    print(rot_x)
+    # Create source
+    for i in range(10):
+        r = ray.Ray()
+        r.z = 50.
+        s.rays.append(r)
 
-    v = rot_z.dot(rot_x.dot(v))
+    c = cylinder.Cylinder() # Add cylinder to scene
 
-    print('Vector:', v)
+    # Main loop over all rays
+    for i in range(len(s.rays)):
+        v = np.array([s.rays[i].x,
+                      s.rays[i].y,
+                      s.rays[i].z])
 
-    r.x = v[0]
-    r.y = v[1]
-    r.z = v[2]
-    
-    norm = math.sqrt(r.x**2 + r.y**2 + r.z**2)
-    
-    r.dx = -r.x / norm
-    r.dy = -r.y / norm
-    r.dz = -r.z / norm
-    
-    r.print()
-    
-    c = cylinder.Cylinder()
-    
-    d = c.intersection(r)
-    
-    print(d)
-    
-    r.x = r.x + r.dx * d
-    r.y = r.y + r.dy * d
-    r.z = r.z + r.dz * d
-    
-    n = c.get_normal(r)
-    
-    print(n)
-    
-    prod = r.dx * n[0] + r.dy * n[1] + r.dz * n[2]
-    
-    r.dx = r.dx - 2 * prod * n[0]
-    r.dy = r.dy - 2 * prod * n[1]
-    r.dz = r.dz - 2 * prod * n[2]
-    
-    r.print()
-    
-    xc, yc, zc = c.draw()
-    ax.plot_surface(xc, yc, zc, alpha=0.5)
+        rot_z = np.array([
+            [math.cos(phi_source), -math.sin(phi_source), 0],
+            [math.sin(phi_source),  math.cos(phi_source), 0],
+            [0,                      0,                   1]
+            ])
+        
+        rot_x = np.array([
+            [1, 0,                       0                     ],
+            [0, math.cos(theta_source), -math.sin(theta_source)],
+            [0, math.sin(theta_source),  math.cos(theta_source)]
+            ])
+        
+        print('Rotation Matrix z:')
+        print(rot_z)
+        print('Rotation Matrix x:')
+        print(rot_x)
+
+        v = rot_z.dot(rot_x.dot(v))
+
+        print('Vector:', v)
+
+        r.x = v[0]
+        r.y = v[1]
+        r.z = v[2]
+        
+        norm = math.sqrt(r.x**2 + r.y**2 + r.z**2)
+        
+        r.dx = -r.x / norm
+        r.dy = -r.y / norm
+        r.dz = -r.z / norm
+        
+        r.print()
+        
+        d = c.intersection(r)
+        
+        print(d)
+        
+        r.x = r.x + r.dx * d
+        r.y = r.y + r.dy * d
+        r.z = r.z + r.dz * d
+        
+        n = c.get_normal(r)
+        
+        print(n)
+        
+        prod = r.dx * n[0] + r.dy * n[1] + r.dz * n[2]
+        
+        r.dx = r.dx - 2 * prod * n[0]
+        r.dy = r.dy - 2 * prod * n[1]
+        r.dz = r.dz - 2 * prod * n[2]
+        
+        r.print()
+        
+        xc, yc, zc = c.draw()
+        ax.plot_surface(xc, yc, zc, alpha=0.5)
     
     #plt.show()
     plt.savefig('view.png', dpi=300)

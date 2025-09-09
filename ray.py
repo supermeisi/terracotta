@@ -1,4 +1,4 @@
-class Ray():
+class Ray:
     def __init__(self):
         # Ray position
         self.x = 0.
