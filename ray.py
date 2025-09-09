@@ -12,4 +12,4 @@ class Ray:
         
     def print(self):
         print(self.x, self.y, self.z)
-        print(self.dx, self.dy, self.dz);
+        print(self.dx, self.dy, self.dz)
