@@ -19,19 +19,17 @@ def main(theta_source, phi_source):
 
     s = source.Source()
 
-    # Create source
-    for i in range(10):
-        r = ray.Ray()
-        r.z = 50.
-        s.rays.append(r)
+    s.z = 50.
+
+    s.generate(10)
 
     c = cylinder.Cylinder() # Add cylinder to scene
 
     # Main loop over all rays
     for i in range(len(s.rays)):
-        v = np.array([s.rays[i].x,
-                      s.rays[i].y,
-                      s.rays[i].z])
+        r = s.rays[i]
+
+        v = np.array([r.x, r.y, r.z])
 
         rot_z = np.array([
             [math.cos(phi_source), -math.sin(phi_source), 0],
@@ -58,11 +56,11 @@ def main(theta_source, phi_source):
         r.y = v[1]
         r.z = v[2]
         
-        norm = math.sqrt(r.x**2 + r.y**2 + r.z**2)
+        norm = math.sqrt(v[0]**2 + v[1]**2 + v[2]**2)
         
-        r.dx = -r.x / norm
-        r.dy = -r.y / norm
-        r.dz = -r.z / norm
+        r.dx = -v[0] / norm
+        r.dy = -v[1] / norm
+        r.dz = -v[2] / norm
         
         r.print()
         
