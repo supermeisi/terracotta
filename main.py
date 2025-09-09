@@ -15,12 +15,35 @@ def main(theta_source, phi_source):
     # Start condition of ray
     theta_source = math.radians(theta_source)
     phi_source = math.radians(phi_source)
-    
+
     print(theta_source, phi_source)
+
+    v = np.array([0., 0., 50.])
+
+    rot_z = np.array([
+        [math.cos(phi_source), -math.sin(phi_source), 0],
+        [math.sin(phi_source),  math.cos(phi_source), 0],
+        [0,                      0,                       1]
+        ])
     
-    r.x = 50. * math.sin(theta_source) * math.cos(phi_source)
-    r.y = 50. * math.sin(theta_source) * math.sin(phi_source)
-    r.z = 50. * math.cos(theta_source)
+    rot_x = np.array([
+        [1, 0,                       0                     ],
+        [0, math.cos(theta_source), -math.sin(theta_source)],
+        [0, math.sin(theta_source),  math.cos(theta_source)]
+        ])
+    
+    print('Rotation Matrix z:')
+    print(rot_z)
+    print('Rotation Matrix x:')
+    print(rot_x)
+
+    v = rot_z.dot(rot_x.dot(v))
+
+    print('Vector:', v)
+
+    r.x = v[0]
+    r.y = v[1]
+    r.z = v[2]
     
     norm = math.sqrt(r.x**2 + r.y**2 + r.z**2)
     
@@ -55,7 +78,8 @@ def main(theta_source, phi_source):
     xc, yc, zc = c.draw()
     ax.plot_surface(xc, yc, zc, alpha=0.5)
     
-    plt.show()
+    #plt.show()
+    plt.savefig('view.png', dpi=300)
 
 if __name__ == "__main__":
     theta_source = 90.
