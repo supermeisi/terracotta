@@ -1,3 +1,5 @@
+import random
+
 import ray
 
 class Source:
@@ -6,12 +8,13 @@ class Source:
         self.y = 0.
         self.z = 0.
 
-        self.n = 1
+        self.w = 0 # Source width
         
         self.rays = []
 
     def generate(self, n):
         for i in range(n):
             r = ray.Ray()
-            r.z = 50
+            r.x = self.w * random.random()
+            r.z = self.w * random.random()
             self.rays.append(r)

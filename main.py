@@ -8,6 +8,7 @@ import source
 import cylinder
 
 def main(theta_source, phi_source):
+    # Drawing 3D scene
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     
@@ -21,9 +22,14 @@ def main(theta_source, phi_source):
 
     s.z = 50.
 
+    s.w = 10.
+
     s.generate(10)
 
     c = cylinder.Cylinder() # Add cylinder to scene
+
+    xc, yc, zc = c.draw()
+    ax.plot_surface(xc, yc, zc, alpha=0.5)
 
     # Main loop over all rays
     for i in range(len(s.rays)):
@@ -55,6 +61,10 @@ def main(theta_source, phi_source):
         r.x = v[0]
         r.y = v[1]
         r.z = v[2]
+
+        old_x = r.x
+        old_y = r.y
+        old_z = r.z
         
         norm = math.sqrt(v[0]**2 + v[1]**2 + v[2]**2)
         
@@ -81,11 +91,10 @@ def main(theta_source, phi_source):
         r.dx = r.dx - 2 * prod * n[0]
         r.dy = r.dy - 2 * prod * n[1]
         r.dz = r.dz - 2 * prod * n[2]
+
+        ax.plot([old_x, r.x], [old_y, r.y], [old_z, r.z])
         
         r.print()
-        
-        xc, yc, zc = c.draw()
-        ax.plot_surface(xc, yc, zc, alpha=0.5)
     
     #plt.show()
     plt.savefig('view.png', dpi=300)
