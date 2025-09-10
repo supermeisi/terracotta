@@ -16,7 +16,7 @@ def main(theta_source, phi_source):
     theta_source = math.radians(theta_source)
     phi_source = math.radians(phi_source)
 
-    print(theta_source, phi_source)
+    #print(theta_source, phi_source)
 
     rot_z = np.array([
         [math.cos(phi_source), -math.sin(phi_source), 0],
@@ -65,7 +65,7 @@ def main(theta_source, phi_source):
     s.ny = v[1]
     s.nz = v[2]
 
-    s.generate(100)
+    s.generate(10000)
 
     c = cylinder.Cylinder() # Add cylinder to scene
 
@@ -85,7 +85,7 @@ def main(theta_source, phi_source):
         
         d = c.intersection(r)
         
-        print(d)
+        #print(d)
         
         r.x = r.x + r.dx * d
         r.y = r.y + r.dy * d
@@ -93,7 +93,7 @@ def main(theta_source, phi_source):
         
         n = c.get_normal(r)
         
-        print(n)
+        #print(n)
         
         prod = r.dx * n[0] + r.dy * n[1] + r.dz * n[2]
         
@@ -103,20 +103,47 @@ def main(theta_source, phi_source):
 
         ax.plot([old_x, r.x], [old_y, r.y], [old_z, r.z])
 
+        # Interaction with lens
+
+        l = (25 - r.x) / r.dx
+
+        if l < 0:
+            continue
+
         old_x = r.x
         old_y = r.y
         old_z = r.z
+
+        r.x = r.x + l * r.dx
+        r.y = r.y + l * r.dy
+        r.z = r.z + l * r.dz
+
+        ax.plot([old_x, r.x], [old_y, r.y], [old_z, r.z])
+
+        print(r.dx, r.dy, r.dz)
+
+        r.dx = r.dx
+        r.dy = r.dy - 1./12.5 * r.y
+        r.dz = r.dz - 1./12.5 * r.z
+
+        print(r.dx, r.dy, r.dz)
+
+        # Interaction with detector
 
         l = (50 - r.x) / r.dx
 
         if l < 0:
             continue
 
+        old_x = r.x
+        old_y = r.y
+        old_z = r.z
+
         r.x = r.x + l * r.dx
         r.y = r.y + l * r.dy
         r.z = r.z + l * r.dz
 
-        r.print()
+        #r.print()
 
         if r.y < -50 or r.y > 50 or r.z  < -50 or r.z > 50:
             continue
@@ -135,14 +162,14 @@ def main(theta_source, phi_source):
 
     plt.close()
 
-    print(hits_y, hits_z)
+    #print(hits_y, hits_z)
 
-    plt.hist2d(hits_y, hits_z, bins=100, cmap ="gray")
+    plt.hist2d(hits_y, hits_z, bins=100, cmap ="gray", range=([[-10., 10.], [-10., 10.]]))
 
     plt.savefig('hist.png', dpi=300)
 
 if __name__ == "__main__":
     theta_source = 90.
-    phi_source = 0.
+    phi_source = 90.
 
     main(theta_source, phi_source)

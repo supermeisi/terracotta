@@ -3,7 +3,7 @@ import numpy as np
 
 class Cylinder():
     def __init__(self):
-        self.r = 5 # Radius in mm
+        self.r = 10 # Radius in mm
         self.height_z = 100 # Height in mm
     
     def intersection(self, ray):
