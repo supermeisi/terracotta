@@ -72,6 +72,9 @@ def main(theta_source, phi_source):
     xc, yc, zc = c.draw()
     ax.plot_surface(xc, yc, zc, alpha=0.5)
 
+    hits_y = []
+    hits_z = []
+
     # Main loop over all rays
     for i in range(len(s.rays)):
         r = s.rays[i]
@@ -98,16 +101,45 @@ def main(theta_source, phi_source):
         r.dy = r.dy - 2 * prod * n[1]
         r.dz = r.dz - 2 * prod * n[2]
 
-        ax.set_xlim(-25., 25.)
-        ax.set_ylim(-25., 25.)
-        ax.set_zlim(-25., 25.)
+        ax.plot([old_x, r.x], [old_y, r.y], [old_z, r.z])
+
+        old_x = r.x
+        old_y = r.y
+        old_z = r.z
+
+        l = (50 - r.x) / r.dx
+
+        if l < 0:
+            continue
+
+        r.x = r.x + l * r.dx
+        r.y = r.y + l * r.dy
+        r.z = r.z + l * r.dz
+
+        r.print()
+
+        if r.y < -50 or r.y > 50 or r.z  < -50 or r.z > 50:
+            continue
 
         ax.plot([old_x, r.x], [old_y, r.y], [old_z, r.z])
-        
-        r.print()
-    
+
+        hits_z.append(r.z)
+        hits_y.append(r.y)
+       
+    ax.set_xlim(-50., 50.)
+    ax.set_ylim(-50., 50.)
+    ax.set_zlim(-50., 50.)
+
     #plt.show()
     plt.savefig('view.png', dpi=300)
+
+    plt.close()
+
+    print(hits_y, hits_z)
+
+    plt.hist2d(hits_y, hits_z, bins=100, cmap ="gray")
+
+    plt.savefig('hist.png', dpi=300)
 
 if __name__ == "__main__":
     theta_source = 90.
