@@ -8,11 +8,9 @@ import source
 import cylinder
 
 def main(theta_source, phi_source):
-    # Drawing 3D scene
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
+    # Display parameters
     n_rays = 100
+    update = 100
     
     # Start condition of ray
     theta_source = math.radians(theta_source)
@@ -71,9 +69,6 @@ def main(theta_source, phi_source):
 
     c = cylinder.Cylinder() # Add cylinder to scene
 
-    xc, yc, zc = c.draw()
-    ax.plot_surface(xc, yc, zc, alpha=0.5)
-
     hits_y = []
     hits_z = []
 
@@ -81,6 +76,11 @@ def main(theta_source, phi_source):
 
     # Main loop over all rays
     for i in range(len(s.rays)):
+        if i % update == 0:
+            plt.hist2d(hits_y, hits_z, bins=100, cmap ="gray", range=([[-10., 10.], [-10., 10.]]))
+            plt.savefig('hist.png', dpi=300)
+            plt.close()
+
         r = s.rays[i]
 
         xs = []
@@ -160,7 +160,11 @@ def main(theta_source, phi_source):
         hits_y.append(r.y)
 
         rays.append([xs, ys, zs])
-       
+
+    # Drawing 3D scene
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
     ax.set_xlim(-50., 50.)
     ax.set_ylim(-50., 50.)
     ax.set_zlim(-50., 50.)
@@ -170,6 +174,9 @@ def main(theta_source, phi_source):
     frac = int(n/n_rays)
 
     print(n_rays, n, frac)
+
+    xc, yc, zc = c.draw()
+    ax.plot_surface(xc, yc, zc, alpha=0.5)
 
     for id, ray in enumerate(rays):
         if id % frac == 0:
@@ -181,10 +188,6 @@ def main(theta_source, phi_source):
     plt.close()
 
     #print(hits_y, hits_z)
-
-    plt.hist2d(hits_y, hits_z, bins=100, cmap ="gray", range=([[-10., 10.], [-10., 10.]]))
-
-    plt.savefig('hist.png', dpi=300)
 
 if __name__ == "__main__":
     theta_source = 90.
