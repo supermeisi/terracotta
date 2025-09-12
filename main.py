@@ -11,6 +11,8 @@ def main(theta_source, phi_source):
     # Drawing 3D scene
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
+
+    n_rays = 100
     
     # Start condition of ray
     theta_source = math.radians(theta_source)
@@ -163,8 +165,15 @@ def main(theta_source, phi_source):
     ax.set_ylim(-50., 50.)
     ax.set_zlim(-50., 50.)
 
-    for ray in rays:
-        ax.plot(ray[0], ray[1], ray[2])
+    n = len(rays)
+
+    frac = int(n/n_rays)
+
+    print(n_rays, n, frac)
+
+    for id, ray in enumerate(rays):
+        if id % frac == 0:
+            ax.plot(ray[0], ray[1], ray[2])
 
     #plt.show()
     plt.savefig('view.png', dpi=300)
