@@ -9,7 +9,8 @@ import cylinder
 
 def main(theta_source, phi_source):
     # Display parameters
-    n_rays = 100
+    n_rays = 1000
+    n_rays_disp = 100
     update = 100
     
     # Start condition of ray
@@ -65,7 +66,7 @@ def main(theta_source, phi_source):
     s.ny = v[1]
     s.nz = v[2]
 
-    s.generate(10000)
+    s.generate(n_rays)
 
     c = cylinder.Cylinder() # Add cylinder to scene
 
@@ -171,15 +172,15 @@ def main(theta_source, phi_source):
 
     n = len(rays)
 
-    frac = int(n/n_rays)
+    frac = int(n/n_rays_disp)
 
-    print(n_rays, n, frac)
+    print(n_rays_disp, n, frac)
 
     xc, yc, zc = c.draw()
     ax.plot_surface(xc, yc, zc, alpha=0.5)
 
     for id, ray in enumerate(rays):
-        if id % frac == 0:
+        if frac != 0 and id % frac == 0:
             ax.plot(ray[0], ray[1], ray[2])
 
     #plt.show()
