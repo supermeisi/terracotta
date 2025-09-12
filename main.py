@@ -75,13 +75,19 @@ def main(theta_source, phi_source):
     hits_y = []
     hits_z = []
 
+    rays = []
+
     # Main loop over all rays
     for i in range(len(s.rays)):
         r = s.rays[i]
 
-        old_x = r.x
-        old_y = r.y
-        old_z = r.z
+        xs = []
+        ys = []
+        zs = []
+
+        xs.append(r.x)
+        ys.append(r.y)
+        zs.append(r.z)
         
         d = c.intersection(r)
         
@@ -101,7 +107,9 @@ def main(theta_source, phi_source):
         r.dy = r.dy - 2 * prod * n[1]
         r.dz = r.dz - 2 * prod * n[2]
 
-        ax.plot([old_x, r.x], [old_y, r.y], [old_z, r.z])
+        xs.append(r.x)
+        ys.append(r.y)
+        zs.append(r.z)
 
         # Interaction with lens
 
@@ -110,15 +118,13 @@ def main(theta_source, phi_source):
         if l < 0:
             continue
 
-        old_x = r.x
-        old_y = r.y
-        old_z = r.z
-
         r.x = r.x + l * r.dx
         r.y = r.y + l * r.dy
         r.z = r.z + l * r.dz
 
-        ax.plot([old_x, r.x], [old_y, r.y], [old_z, r.z])
+        xs.append(r.x)
+        ys.append(r.y)
+        zs.append(r.z)
 
         print(r.dx, r.dy, r.dz)
 
@@ -135,10 +141,6 @@ def main(theta_source, phi_source):
         if l < 0:
             continue
 
-        old_x = r.x
-        old_y = r.y
-        old_z = r.z
-
         r.x = r.x + l * r.dx
         r.y = r.y + l * r.dy
         r.z = r.z + l * r.dz
@@ -148,14 +150,21 @@ def main(theta_source, phi_source):
         if r.y < -50 or r.y > 50 or r.z  < -50 or r.z > 50:
             continue
 
-        ax.plot([old_x, r.x], [old_y, r.y], [old_z, r.z])
+        xs.append(r.x)
+        ys.append(r.y)
+        zs.append(r.z)
 
         hits_z.append(r.z)
         hits_y.append(r.y)
+
+        rays.append([xs, ys, zs])
        
     ax.set_xlim(-50., 50.)
     ax.set_ylim(-50., 50.)
     ax.set_zlim(-50., 50.)
+
+    for ray in rays:
+        ax.plot(ray[0], ray[1], ray[2])
 
     #plt.show()
     plt.savefig('view.png', dpi=300)
@@ -170,6 +179,6 @@ def main(theta_source, phi_source):
 
 if __name__ == "__main__":
     theta_source = 90.
-    phi_source = 90.
+    phi_source = 45.
 
     main(theta_source, phi_source)
