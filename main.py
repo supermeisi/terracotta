@@ -98,28 +98,28 @@ def main(theta_source, phi_source):
         zs.append(r.z)
 
         while True:
-            dmin = 1000000
-            idc = 0
             is_neg = True
+            dlst = []
 
             for id, c in enumerate(cs):
                 d = c.intersection(r)
+                dlst.append(d)
                 if d > 0:
                     is_neg = False
-                if d < dmin and d > 0:
-                    dmin = d
-                    idc = id
 
             #print(idc, dmin)
 
             if is_neg:
                 break
 
+            id = dlst.index(min(filter(lambda x : x > 0, dlst)))
+            dmin = dlst[id]
+
             r.x = r.x + r.dx * dmin
             r.y = r.y + r.dy * dmin
             r.z = r.z + r.dz * dmin
             
-            n = cs[idc].get_normal(r)
+            n = cs[id].get_normal(r)
             
             #print(n)
             
