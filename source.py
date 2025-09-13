@@ -61,6 +61,6 @@ class Source:
             r.dy = self.ny
             r.dz = self.nz
 
-            r.print()
+            #r.print()
 
             self.rays.append(r)

@@ -9,9 +9,9 @@ import cylinder
 
 def main(theta_source, phi_source):
     # Display parameters
-    n_rays = 1000
+    n_rays = 1000000
     n_rays_disp = 100
-    update = 100
+    update = 1000
     
     # Start condition of ray
     theta_source = math.radians(theta_source)
@@ -34,7 +34,7 @@ def main(theta_source, phi_source):
     s = source.Source()
 
     s.z = 50.
-    s.w = 10.
+    s.w = 8.
 
     v = np.array([s.x, s.y, s.z])
     
@@ -79,6 +79,7 @@ def main(theta_source, phi_source):
     for i in range(len(s.rays)):
         if i % update == 0:
             plt.hist2d(hits_y, hits_z, bins=100, cmap ="gray", range=([[-10., 10.], [-10., 10.]]))
+            plt.colorbar()
             plt.savefig('hist.png', dpi=300)
             plt.close()
 
@@ -129,13 +130,13 @@ def main(theta_source, phi_source):
         ys.append(r.y)
         zs.append(r.z)
 
-        print(r.dx, r.dy, r.dz)
+        #print(r.dx, r.dy, r.dz)
 
         r.dx = r.dx
         r.dy = r.dy - 1./12.5 * r.y
         r.dz = r.dz - 1./12.5 * r.z
 
-        print(r.dx, r.dy, r.dz)
+        #print(r.dx, r.dy, r.dz)
 
         # Interaction with detector
 
@@ -174,7 +175,7 @@ def main(theta_source, phi_source):
 
     frac = int(n/n_rays_disp)
 
-    print(n_rays_disp, n, frac)
+    #print(n_rays_disp, n, frac)
 
     xc, yc, zc = c.draw()
     ax.plot_surface(xc, yc, zc, alpha=0.5)
