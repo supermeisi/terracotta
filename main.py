@@ -68,7 +68,7 @@ def main(theta_source, phi_source):
 
     s.generate(n_rays)
 
-    c = cylinder.Cylinder() # Add cylinder to scene
+    c = cylinder.Cylinder(r=10., height_z=10, center=(0., 0., -10.)) # Add cylinder to scene
 
     hits_y = []
     hits_z = []
