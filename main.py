@@ -34,7 +34,7 @@ def main(theta_source, phi_source):
     s = source.Source()
 
     s.z = 50.
-    s.w = 8.
+    s.w = 10.
 
     v = np.array([s.x, s.y, s.z])
     
