@@ -9,7 +9,7 @@ import cylinder
 
 def main(theta_source, phi_source):
     # Display parameters
-    n_rays = 1000000
+    n_rays = 100000
     n_rays_disp = 100
     update = 1000
     
@@ -68,7 +68,11 @@ def main(theta_source, phi_source):
 
     s.generate(n_rays)
 
-    c = cylinder.Cylinder(r=10., height_z=10, center=(0., 0., -10.)) # Add cylinder to scene
+    c1 = cylinder.Cylinder(r=10., height_z=10, center=(0., 0., 10.5)) # Add cylinder to scene
+    c2 = cylinder.Cylinder(r=10., height_z=10, center=(0., 0., -10.5)) # Add cylinder to scene
+
+    # Include all cylinders
+    cs = [c1, c2]
 
     hits_y = []
     hits_z = []
@@ -92,39 +96,53 @@ def main(theta_source, phi_source):
         xs.append(r.x)
         ys.append(r.y)
         zs.append(r.z)
-        
-        d = c.intersection(r)
-        
-        #print(d)
-        
-        r.x = r.x + r.dx * d
-        r.y = r.y + r.dy * d
-        r.z = r.z + r.dz * d
-        
-        n = c.get_normal(r)
-        
-        #print(n)
-        
-        prod = r.dx * n[0] + r.dy * n[1] + r.dz * n[2]
-        
-        r.dx = r.dx - 2 * prod * n[0]
-        r.dy = r.dy - 2 * prod * n[1]
-        r.dz = r.dz - 2 * prod * n[2]
 
-        xs.append(r.x)
-        ys.append(r.y)
-        zs.append(r.z)
+        while True:
+            dmin = 1000000
+            idc = 0
+            is_neg = True
+
+            for id, c in enumerate(cs):
+                d = c.intersection(r)
+                if d > 0:
+                    is_neg = False
+                if d < dmin and d > 0:
+                    dmin = d
+                    idc = id
+
+            #print(idc, dmin)
+
+            if is_neg:
+                break
+
+            r.x = r.x + r.dx * dmin
+            r.y = r.y + r.dy * dmin
+            r.z = r.z + r.dz * dmin
+            
+            n = cs[idc].get_normal(r)
+            
+            #print(n)
+            
+            prod = r.dx * n[0] + r.dy * n[1] + r.dz * n[2]
+            
+            r.dx = r.dx - 2 * prod * n[0]
+            r.dy = r.dy - 2 * prod * n[1]
+            r.dz = r.dz - 2 * prod * n[2]
+
+            xs.append(r.x)
+            ys.append(r.y)
+            zs.append(r.z)
 
         # Interaction with lens
 
-        l = (25 - r.x) / r.dx
+        d = (25 - r.x) / r.dx
 
-        if l < 0:
+        if d < 0:
             continue
 
-        r.x = r.x + l * r.dx
-        r.y = r.y + l * r.dy
-        r.z = r.z + l * r.dz
+        r.x = r.x + d * r.dx
+        r.y = r.y + d * r.dy
+        r.z = r.z + d * r.dz
 
         xs.append(r.x)
         ys.append(r.y)
@@ -140,14 +158,14 @@ def main(theta_source, phi_source):
 
         # Interaction with detector
 
-        l = (50 - r.x) / r.dx
+        d = (50 - r.x) / r.dx
 
-        if l < 0:
+        if d < 0:
             continue
 
-        r.x = r.x + l * r.dx
-        r.y = r.y + l * r.dy
-        r.z = r.z + l * r.dz
+        r.x = r.x + d * r.dx
+        r.y = r.y + d * r.dy
+        r.z = r.z + d * r.dz
 
         #r.print()
 
@@ -163,6 +181,8 @@ def main(theta_source, phi_source):
 
         rays.append([xs, ys, zs])
 
+        
+
     # Drawing 3D scene
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -177,8 +197,9 @@ def main(theta_source, phi_source):
 
     #print(n_rays_disp, n, frac)
 
-    xc, yc, zc = c.draw()
-    ax.plot_surface(xc, yc, zc, alpha=0.5)
+    for c in cs:
+        xc, yc, zc = c.draw()
+        ax.plot_surface(xc, yc, zc, alpha=0.5)
 
     for id, ray in enumerate(rays):
         if frac != 0 and id % frac == 0:
